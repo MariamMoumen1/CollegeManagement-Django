@@ -31,6 +31,8 @@ DEBUG = True
 # ALLOWED_HOSTS = ['smswithdjango.herokuapp.com']
 ALLOWED_HOSTS = ['*']  # Not recommended but useful in dev mode
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost:30003']
+
 
 # Application definition
 
