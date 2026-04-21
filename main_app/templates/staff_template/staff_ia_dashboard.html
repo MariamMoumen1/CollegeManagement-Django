@@ -1,0 +1,313 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  :root {
+    --blue: #3b82f6;
+    --blue-dark: #2563eb;
+    --blue-light: #dbeafe;
+    --red: #ef4444;
+    --red-light: #fee2e2;
+    --orange: #f97316;
+    --orange-light: #fff7ed;
+    --yellow: #eab308;
+    --yellow-light: #fefce8;
+    --green: #22c55e;
+    --green-light: #dcfce7;
+    --purple: #8b5cf6;
+    --purple-light: #ede9fe;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border: #e2e8f0;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+
+  /* KPI */
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  .kpi-card { background:#fff; border-radius:12px; padding:18px 20px; box-shadow:var(--shadow); border:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .kpi-left {}
+  .kpi-num { font-size:32px; font-weight:700; color:var(--text-primary); letter-spacing:-1px; line-height:1; }
+  .kpi-label { font-size:12px; color:var(--text-muted); margin-top:4px; }
+  .kpi-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+  .kpi-icon.blue   { background:var(--blue-light);   color:var(--blue-dark); }
+  .kpi-icon.green  { background:var(--green-light);  color:#166534; }
+  .kpi-icon.gray   { background:#f1f5f9; color:#64748b; }
+  .kpi-icon.red    { background:var(--red-light);    color:var(--red); }
+  .kpi-num.red { color:var(--red); }
+
+  /* TWO COL */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+
+  /* SECTION CARD */
+  .section-card { background:#fff; border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:20px; }
+  .section-header { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .section-title { font-size:14px; font-weight:700; color:var(--text-primary); }
+  .section-sub { font-size:12px; color:var(--text-muted); margin-bottom:16px; }
+  .badge-algo { font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; }
+  .badge-detection { background:var(--yellow-light); color:#92400e; }
+  .badge-content   { background:var(--green-light);  color:#166534; }
+  .badge-pred      { background:var(--orange-light); color:#92400e; }
+
+  /* RISK ITEMS */
+  .risk-item {
+    border-radius:10px; padding:14px 16px; margin-bottom:10px;
+    border:1px solid var(--border);
+  }
+  .risk-item.high { background:#fff5f5; border-color:#fecaca; }
+  .risk-item.med  { background:#fffbeb; border-color:#fde68a; }
+  .risk-top { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+  .risk-avatar {
+    width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; flex-shrink:0;
+  }
+  .risk-avatar.red    { background:#fee2e2; color:#dc2626; }
+  .risk-avatar.yellow { background:#fef9c3; color:#854d0e; }
+  .risk-info { flex:1; }
+  .risk-name { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .risk-detail { font-size:11px; color:var(--text-muted); }
+  .risk-pct { font-size:13px; font-weight:700; text-align:right; }
+  .risk-pct span { display:block; font-size:10px; font-weight:500; color:var(--text-muted); }
+  .risk-bar-wrap { margin-bottom:8px; }
+  .risk-track { height:5px; background:#e5e7eb; border-radius:10px; overflow:hidden; }
+  .risk-fill { height:100%; border-radius:10px; }
+  .btn-contact {
+    display:inline-block; float:right;
+    font-size:11px; font-weight:600; padding:4px 12px;
+    border-radius:6px; cursor:pointer; border:none;
+    background:#fff; border:1px solid var(--border);
+    color:var(--text-secondary);
+  }
+  .btn-contact:hover { background:var(--blue-light); color:var(--blue-dark); border-color:#bfdbfe; }
+
+  /* RECOMMANDATIONS */
+  .reco-list { display:flex; flex-direction:column; gap:8px; }
+  .reco-item {
+    display:flex; align-items:center; gap:12px;
+    padding:12px 14px; border-radius:10px;
+    border:1px solid var(--border); background:#fafbfc;
+  }
+  .reco-item:hover { background:var(--blue-light); border-color:#bfdbfe; }
+  .reco-icon { color:var(--green); font-size:16px; flex-shrink:0; }
+  .reco-info { flex:1; }
+  .reco-title { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .reco-sub { font-size:11px; color:var(--text-muted); }
+  .btn-publish {
+    font-size:11px; font-weight:600; padding:5px 14px;
+    border-radius:6px; cursor:pointer; border:none;
+    background:var(--blue-light); color:var(--blue-dark);
+    white-space:nowrap;
+  }
+  .btn-publish:hover { background:var(--blue); color:#fff; }
+
+  /* TENDANCE NOTES */
+  .tendance-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .tendance-card { background:#fafbfc; border:1px solid var(--border); border-radius:10px; padding:16px; }
+  .tendance-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .tendance-name { font-size:13px; font-weight:700; color:var(--text-primary); }
+  .tendance-badge { font-size:10px; font-weight:600; padding:3px 10px; border-radius:20px; }
+  .tendance-badge.baisse { background:#fee2e2; color:#dc2626; }
+  .tendance-badge.stable { background:#fef9c3; color:#854d0e; }
+  .bar-chart { display:flex; gap:8px; align-items:flex-end; height:60px; margin-bottom:8px; }
+  .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .bar { width:100%; border-radius:4px 4px 0 0; }
+  .bar-label { font-size:10px; color:var(--text-muted); }
+  .bar-label.pred { color:var(--red); font-style:italic; }
+</style>
+
+<section class="content">
+  <div class="container-fluid" style="padding:24px;">
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-left">
+          <div class="kpi-num">2</div>
+          <div class="kpi-label">Total Students</div>
+        </div>
+        <div class="kpi-icon blue"><i class="fas fa-users"></i></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-left">
+          <div class="kpi-num">4</div>
+          <div class="kpi-label">Total Attendance Taken</div>
+        </div>
+        <div class="kpi-icon green"><i class="fas fa-calendar-check"></i></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-left">
+          <div class="kpi-num">0</div>
+          <div class="kpi-label">Total Leave Applied</div>
+        </div>
+        <div class="kpi-icon gray"><i class="fas fa-times"></i></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-left">
+          <div class="kpi-num red">1</div>
+          <div class="kpi-label">Alerte IA active</div>
+        </div>
+        <div class="kpi-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+      </div>
+    </div>
+
+    <!-- Two col -->
+    <div class="two-col">
+
+      <!-- Alertes élèves à risque -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">Alertes élèves à risque</span>
+          <span class="badge-algo badge-detection">Détection IA</span>
+        </div>
+        <div class="section-sub"></div>
+
+        <div class="risk-item high">
+          <div class="risk-top">
+            <div class="risk-avatar red">KB</div>
+            <div class="risk-info">
+              <div class="risk-name">Karim Benali</div>
+              <div class="risk-detail">5 absences · Moy. 7.2 en baisse rapide</div>
+            </div>
+            <div class="risk-pct" style="color:#ef4444;">86%<span>risque</span></div>
+          </div>
+          <div class="risk-bar-wrap">
+            <div class="risk-track">
+              <div class="risk-fill" style="width:86%;background:#ef4444;"></div>
+            </div>
+          </div>
+          <button class="btn-contact">Contacter parent</button>
+          <div style="clear:both;"></div>
+        </div>
+
+        <div class="risk-item med">
+          <div class="risk-top">
+            <div class="risk-avatar yellow">SI</div>
+            <div class="risk-info">
+              <div class="risk-name">Sara Idrissi</div>
+              <div class="risk-detail">3 absences · Moy. 9.0 · moins active en cours</div>
+            </div>
+            <div class="risk-pct" style="color:#eab308;">54%<span>risque</span></div>
+          </div>
+          <div class="risk-bar-wrap">
+            <div class="risk-track">
+              <div class="risk-fill" style="width:54%;background:#eab308;"></div>
+            </div>
+          </div>
+          <button class="btn-contact">Contacter parent</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Recommandations de cours IA -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">Recommandations de cours IA</span>
+          <span class="badge-algo badge-content">Content-based</span>
+        </div>
+        <div class="section-sub">Cours suggérés par l'IA selon les performances de vos élèves</div>
+
+        <div class="reco-list">
+          <div class="reco-item">
+            <i class="fas fa-file-alt reco-icon"></i>
+            <div class="reco-info">
+              <div class="reco-title">Exercices algèbre niveau 2</div>
+              <div class="reco-sub">Recommandé pour 2 élèves en difficulté · Pertinence 91%</div>
+            </div>
+            <button class="btn-publish">Publier</button>
+          </div>
+          <div class="reco-item">
+            <i class="fas fa-file-alt reco-icon"></i>
+            <div class="reco-info">
+              <div class="reco-title">Quiz révision — Python bases</div>
+              <div class="reco-sub">Adapté au niveau moyen · Pertinence 78%</div>
+            </div>
+            <button class="btn-publish">Publier</button>
+          </div>
+          <div class="reco-item">
+            <i class="fas fa-file-alt reco-icon"></i>
+            <div class="reco-info">
+              <div class="reco-title">TP pratique — POO avancée</div>
+              <div class="reco-sub">Pour élèves avancés · Pertinence 83%</div>
+            </div>
+            <button class="btn-publish">Publier</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tendance notes -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-title">Analyse des notes par élève — tendance IA</span>
+        <span class="badge-algo badge-pred">Prédiction</span>
+      </div>
+      <div class="tendance-grid">
+
+        <div class="tendance-card">
+          <div class="tendance-header">
+            <span class="tendance-name">Karim Benali</span>
+            <span class="tendance-badge baisse">En baisse</span>
+          </div>
+          <div class="bar-chart">
+            <div class="bar-col">
+              <div class="bar" style="height:50px;background:#22c55e;"></div>
+              <div class="bar-label">Sem. 1</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:38px;background:#eab308;"></div>
+              <div class="bar-label">Sem. 2</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:28px;background:#ef4444;"></div>
+              <div class="bar-label">Sem. 3</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:22px;background:#fca5a5;"></div>
+              <div class="bar-label pred">Sem. 4</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-label pred" style="height:60px;display:flex;align-items:flex-end;">Prédit</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tendance-card">
+          <div class="tendance-header">
+            <span class="tendance-name">Sara Idrissi</span>
+            <span class="tendance-badge stable">Stable</span>
+          </div>
+          <div class="bar-chart">
+            <div class="bar-col">
+              <div class="bar" style="height:40px;background:#22c55e;"></div>
+              <div class="bar-label">Sem. 1</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:42px;background:#22c55e;"></div>
+              <div class="bar-label">Sem. 2</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:44px;background:#22c55e;"></div>
+              <div class="bar-label">Sem. 3</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:38px;background:#eab308;"></div>
+              <div class="bar-label">Sem. 4</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:36px;background:#fde68a;"></div>
+              <div class="bar-label pred">Prédit</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock content %}

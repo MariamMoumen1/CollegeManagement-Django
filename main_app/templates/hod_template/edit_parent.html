@@ -1,0 +1,54 @@
+{% extends 'main_app/base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            ✏️ Modifier Parent
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Email (readonly car lié au CustomUser) -->
+                <div class="mb-3">
+                    <label>Email</label>
+                    <input type="email" class="form-control"
+                           value="{{ parent.admin.email }}" readonly>
+                </div>
+
+                <!-- Student selection -->
+                <div class="mb-3">
+                    <label>Étudiant</label>
+                    <select name="student" class="form-control" required>
+                        <option value="">Select Student</option>
+
+                        {% for student in students %}
+                            <option value="{{ student.id }}"
+                                {% if student.id == parent.student.id %}selected{% endif %}>
+                                {{ student.admin.first_name }} {{ student.admin.last_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <button type="submit" class="btn btn-success">
+                    💾 Sauvegarder
+                </button>
+
+                <a href="{% url 'parent_home' %}" class="btn btn-secondary">
+                    ⬅ Annuler
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

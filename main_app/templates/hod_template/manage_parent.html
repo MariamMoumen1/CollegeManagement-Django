@@ -1,0 +1,41 @@
+{% extends 'main_app/base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+    <h3>📋 Liste des Parents</h3>
+
+    <table class="table table-bordered mt-3">
+        <tr>
+            <th>Email</th>
+            <th>Étudiant</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for parent in parents %}
+        <tr>
+            <td>{{ parent.admin.email }}</td>
+            <td>
+                {{ parent.student.admin.first_name }} 
+                {{ parent.student.admin.last_name }}
+            </td>
+            <td>
+
+                <!-- ✏️ MODIFIER -->
+                <a href="{% url 'edit_parent' parent.id %}" class="btn btn-warning btn-sm">
+                    Modifier
+                </a>
+
+                <!-- 🗑 SUPPRIMER -->
+                <a href="{% url 'delete_parent' parent.id %}" 
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Voulez-vous vraiment supprimer ce parent ?')">
+                    Supprimer
+                </a>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

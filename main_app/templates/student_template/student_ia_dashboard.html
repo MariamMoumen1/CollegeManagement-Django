@@ -1,0 +1,268 @@
+{% extends 'main_app/base.html' %}
+
+{% block page_title %}Mon Suivi IA Personnel{% endblock page_title %}
+
+{% block content %}
+
+<section class="content">
+  <div class="container-fluid">
+
+    <!-- ─── KPI CARDS ──────────────────────────────────────────────────── -->
+    <div class="row mb-4">
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box" style="border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08);">
+          <div class="inner">
+            <h3>{{ total_attendance }}</h3>
+            <p>Total Attendance</p>
+          </div>
+          <div class="icon" style="color:#4361ee22;">
+            <i class="fas fa-calendar-check" style="color:#4361ee;"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box" style="border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08);">
+          <div class="inner" style="color:#2ec4b6;">
+            <h3>{{ percentage_present }}%</h3>
+            <p>Percentage Present</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-check-circle" style="color:#2ec4b6;"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box" style="border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08);">
+          <div class="inner" style="color:#e63946;">
+            <h3>{{ percentage_absent }}%</h3>
+            <p>Percentage Absent</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-times-circle" style="color:#e63946;"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box" style="border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08);">
+          <div class="inner">
+            <h3>{{ total_subjects }}</h3>
+            <p>Total Subject</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-book" style="color:#adb5bd;"></i>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.row KPI -->
+
+    <!-- ─── ROW 2 : Analyse de performance + Cours recommandés ─────────── -->
+    <div class="row mb-4">
+
+      <!-- Analyse de performance -->
+      <div class="col-lg-6">
+        <div class="card h-100" style="border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.08); border:none;">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-1">
+              <h5 class="mb-0 mr-2" style="font-weight:700;">Mon analyse de performance</h5>
+              <span class="badge" style="background:#e8f5e9; color:#2e7d32; font-size:11px; padding:4px 10px; border-radius:20px;">IA personnelle</span>
+            </div>
+            <p class="text-muted mb-3" style="font-size:13px;">
+              Comparaison avec les élèves de ton niveau ({{ subject_name }})
+            </p>
+
+            <!-- Ma moyenne -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span style="font-size:13px;">Ta moyenne actuelle</span>
+                <span style="font-size:13px; color:#4361ee; font-weight:600;">{{ student_average }} / 20</span>
+              </div>
+              <div class="progress" style="height:8px; border-radius:10px;">
+                <div class="progress-bar" style="width:{{ student_average_pct }}%; background:#4361ee; border-radius:10px;"></div>
+              </div>
+            </div>
+
+            <!-- Moyenne classe -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span style="font-size:13px;">Moyenne de la classe</span>
+                <span style="font-size:13px; color:#6c757d; font-weight:600;">{{ class_average }} / 20</span>
+              </div>
+              <div class="progress" style="height:8px; border-radius:10px;">
+                <div class="progress-bar" style="width:{{ class_average_pct }}%; background:#adb5bd; border-radius:10px;"></div>
+              </div>
+            </div>
+
+            <!-- Objectif IA -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span style="font-size:13px;">Objectif IA recommandé</span>
+                <span style="font-size:13px; color:#2ec4b6; font-weight:600;">{{ ia_target }} / 20</span>
+              </div>
+              <div class="progress" style="height:8px; border-radius:10px;">
+                <div class="progress-bar" style="width:{{ ia_target_pct }}%; background:#2ec4b6; border-radius:10px;"></div>
+              </div>
+            </div>
+
+            <!-- Conseil IA -->
+            <div class="p-3 mt-2" style="background:#fff8e1; border-radius:10px; border-left:4px solid #f9a825;">
+              <span style="font-weight:700; font-size:13px;">Conseil IA : </span>
+              <span style="font-size:13px;">{{ ia_conseil }}</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Cours recommandés -->
+      <div class="col-lg-6">
+        <div class="card h-100" style="border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.08); border:none;">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-1">
+              <h5 class="mb-0 mr-2" style="font-weight:700;">Cours recommandés pour toi</h5>
+              <span class="badge" style="background:#e8f5e9; color:#2e7d32; font-size:11px; padding:4px 10px; border-radius:20px;">Filtrage IA</span>
+            </div>
+            <p class="text-muted mb-3" style="font-size:13px;">Basé sur tes notes et tes difficultés détectées en {{ subject_name }}</p>
+
+            {% for cours in cours_recommandes %}
+            <div class="d-flex align-items-center justify-content-between p-3 mb-2"
+                 style="border-radius:10px; border:1px solid #e9ecef; background:#fafafa;">
+              <div class="d-flex align-items-center">
+                <div class="mr-3 d-flex align-items-center justify-content-center"
+                     style="width:36px;height:36px;border-radius:8px;background:{{ cours.icon_bg }};">
+                  <i class="{{ cours.icon }}" style="color:{{ cours.icon_color }};font-size:15px;"></i>
+                </div>
+                <div>
+                  <div style="font-weight:600; font-size:13px;">{{ cours.titre }}</div>
+                  <div style="font-size:11px; color:#6c757d;">
+                    {{ cours.type }} ·
+                    <span style="color:#4361ee; font-weight:600;">Pertinence {{ cours.pertinence }}%</span>
+                  </div>
+                </div>
+              </div>
+              <a href="{{ cours.url }}" style="font-size:13px; color:#4361ee; font-weight:600; text-decoration:none;">Voir</a>
+            </div>
+            {% empty %}
+            <div class="text-center text-muted py-4">
+              <i class="fas fa-robot fa-2x mb-2"></i>
+              <p>Aucune recommandation disponible pour le moment.</p>
+            </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.row 2 -->
+
+    <!-- ─── ROW 3 : Progression IA par matière ──────────────────────────── -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card" style="border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.08); border:none;">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+              <h5 class="mb-0 mr-2" style="font-weight:700;">Ma progression — analyse IA par matière</h5>
+              <span class="badge" style="background:#e3f2fd; color:#1565c0; font-size:11px; padding:4px 10px; border-radius:20px;">Prédiction</span>
+            </div>
+
+            <div class="row">
+
+              <!-- Carte note actuelle -->
+              <div class="col-lg-4">
+                <div class="p-3" style="border-radius:12px; border:1px solid #e9ecef; background:#fafafa; height:100%;">
+                  <p class="text-muted mb-1" style="font-size:13px;">{{ subject_name }}</p>
+                  <h2 style="font-weight:800; color:#212529;">{{ student_average }}</h2>
+                  <div class="progress mb-1" style="height:6px; border-radius:10px;">
+                    <div class="progress-bar" style="width:{{ student_average_pct }}%; background:#f9a825; border-radius:10px;"></div>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span style="font-size:12px; color:#e63946; font-weight:600;">En dessous classe</span>
+                    <span style="font-size:12px; color:#6c757d;">{{ class_average }} moy.</span>
+                  </div>
+                  <div class="mt-2" style="font-size:12px; color:#7b2fbe; font-weight:600;">
+                    <i class="fas fa-robot mr-1"></i> IA prédit : {{ ia_prediction }} prochain devoir
+                  </div>
+                </div>
+              </div>
+
+              <!-- Graphe de progression hebdomadaire -->
+              <div class="col-lg-8">
+                <div class="p-3" style="border-radius:12px; border:1px solid #e9ecef; background:#fafafa; height:100%;">
+                  <p class="text-muted mb-3" style="font-size:13px;">Comparaison avec 70% des élèves de ta classe</p>
+                  <canvas id="progressionChart" height="90"></canvas>
+                  <div class="mt-3 p-2" style="background:#e8f5e9; border-radius:8px;">
+                    <span style="font-size:12px; color:#2e7d32; font-weight:600;">
+                      <i class="fas fa-arrow-up mr-1"></i>{{ ia_progression_msg }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /.row inner -->
+          </div>
+        </div>
+      </div>
+    </div><!-- /.row 3 -->
+
+  </div><!-- /.container-fluid -->
+</section>
+
+{% endblock content %}
+
+{% block custom_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Données passées depuis la view Django
+  const semLabels  = ['Sem. 1', 'Sem. 2', 'Sem. 3', 'Sem. 4', 'Prédit'];
+  const semNotes   = {{ weekly_notes|safe }};      // ex: [9, 10, 10.5, null, 11.8]
+  const semClasse  = {{ weekly_class_avg|safe }};  // ex: [11, 11.5, 12.1, null, null]
+
+  const ctx = document.getElementById('progressionChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: semLabels,
+      datasets: [
+        {
+          label: 'Ma note',
+          data: semNotes,
+          borderColor: '#4361ee',
+          backgroundColor: 'rgba(67,97,238,0.08)',
+          borderWidth: 2,
+          pointRadius: 4,
+          tension: 0.4,
+          spanGaps: true,
+        },
+        {
+          label: 'Moyenne classe',
+          data: semClasse,
+          borderColor: '#adb5bd',
+          borderDash: [5,5],
+          borderWidth: 1.5,
+          pointRadius: 3,
+          tension: 0.4,
+          spanGaps: true,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 11 } } }
+      },
+      scales: {
+        y: {
+          min: 0, max: 20,
+          ticks: { font: { size: 11 } },
+          grid: { color: '#f0f0f0' }
+        },
+        x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+      }
+    }
+  });
+</script>
+{% endblock custom_js %}

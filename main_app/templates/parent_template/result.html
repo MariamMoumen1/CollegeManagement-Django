@@ -1,0 +1,112 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+
+{% block page_title %}
+Results - {{ student.admin.first_name }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+.result-card {
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border: none;
+}
+
+.result-header {
+    background: linear-gradient(135deg, #6366f1, #2563eb);
+    color: white;
+    padding: 12px 15px;
+    border-radius: 15px 15px 0 0;
+    font-weight: 600;
+}
+
+.stat-box {
+    padding: 15px;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+.stat-blue {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.stat-green {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.table thead {
+    background: #111827;
+    color: white;
+}
+</style>
+
+<div class="container mt-4">
+
+    <h3>📊 Results - {{ student.admin.first_name }} {{ student.admin.last_name }}</h3>
+
+    <!-- STATS -->
+    <div class="row mb-3">
+
+        <div class="col-md-6">
+            <div class="stat-box stat-blue">
+                📈 Moyenne générale <br>
+                <h3>{{ average }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="stat-box stat-green">
+                📚 Matières <br>
+                <h3>{{ results|length }}</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="result-card">
+
+        <div class="result-header">
+            📝 Détails des notes
+        </div>
+
+        <div class="p-3 table-responsive">
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Matière</th>
+                        <th>Test</th>
+                        <th>Examen</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for r in results %}
+                    <tr>
+                        <td>{{ r.subject }}</td>
+                        <td>{{ r.test }}</td>
+                        <td>{{ r.exam }}</td>
+                        <td>
+                            <b>{{ r.total }}</b>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">Aucun résultat</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

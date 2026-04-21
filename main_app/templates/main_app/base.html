@@ -1,0 +1,602 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>College Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css'%}">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css'%}">
+    <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css'%}">
+    <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css'%}">
+    <link rel="stylesheet" href="{% static 'plugins/overlayScrollbars/css/OverlayScrollbars.min.css'%}">
+    <link rel="stylesheet" href="{% static 'plugins/daterangepicker/daterangepicker.css'%}">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    {% block custom_css %}{% endblock custom_css %}
+
+    <style>
+    /* =====================================================
+       GLOBAL
+       ===================================================== */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+        background-color: #f0f2f8 !important;
+        font-family: 'Source Sans Pro', 'Segoe UI', sans-serif !important;
+    }
+
+    /* =====================================================
+       NAVBAR (top bar)
+       ===================================================== */
+    .main-header.navbar {
+        background: #ffffff !important;
+        border-bottom: 1px solid #e8ecf0 !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
+        min-height: 58px !important;
+        padding: 0 20px !important;
+    }
+    .main-header .nav-link {
+        color: #4b5563 !important;
+        font-size: 18px !important;
+        padding: 0 12px !important;
+        transition: color 0.15s;
+    }
+    .main-header .nav-link:hover { color: #3b82f6 !important; }
+
+    /* Pushmenu icon */
+    .main-header .fas.fa-bars { font-size: 18px; }
+
+    /* =====================================================
+       SIDEBAR
+       ===================================================== */
+    .main-sidebar,
+    .main-sidebar.sidebar-dark-info {
+        background: #111318 !important;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.25) !important;
+        border-right: none !important;
+    }
+    .brand-link {
+        background: #0c0e13 !important;
+        border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+        padding: 14px 16px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        text-decoration: none !important;
+    }
+    .brand-link .brand-image {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+        margin: 0 !important;
+        border: 2px solid rgba(59,130,246,0.4);
+    }
+    .brand-link .brand-text,
+    .brand-link b {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+        letter-spacing: 0.3px;
+    }
+    .brand-link h3 { display: none; }
+
+    .sidebar {
+        padding: 0 10px !important;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.08) transparent;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+    .user-panel {
+        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+        padding: 12px 8px !important;
+        margin: 8px 0 4px 0 !important;
+    }
+    .user-panel .image img {
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 50% !important;
+        border: 2px solid rgba(59,130,246,0.5) !important;
+        object-fit: cover;
+    }
+    .user-panel .info a {
+        color: #e2e8f0 !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+    }
+    .user-panel .info a:hover { color: #ffffff !important; }
+    .user-role {
+        display: block;
+        font-size: 11px;
+        color: rgba(255,255,255,0.3);
+        margin-top: 1px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .sidebar-section-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255,255,255,0.2);
+        letter-spacing: 1.2px;
+        padding: 16px 10px 6px 10px;
+        text-transform: uppercase;
+    }
+
+    .nav-sidebar .nav-item .nav-link {
+        border-radius: 10px !important;
+        padding: 9px 12px !important;
+        margin-bottom: 2px !important;
+        color: rgba(255,255,255,0.55) !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        transition: background 0.18s ease, color 0.18s ease !important;
+        white-space: nowrap;
+        background: transparent !important;
+    }
+    .nav-sidebar .nav-item .nav-link:hover {
+        background: rgba(59,130,246,0.1) !important;
+        color: #ffffff !important;
+    }
+    .nav-sidebar .nav-item .nav-link.active,
+    .nav-sidebar .nav-item .nav-link.active:hover {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
+    }
+    .nav-sidebar .nav-link .nav-icon {
+        width: 20px !important;
+        font-size: 14px !important;
+        text-align: center !important;
+        color: rgba(255,255,255,0.35) !important;
+        flex-shrink: 0;
+        transition: color 0.18s;
+    }
+    .nav-sidebar .nav-link:hover .nav-icon,
+    .nav-sidebar .nav-link.active .nav-icon { color: #ffffff !important; }
+
+    .nav-sidebar .nav-link .right {
+        margin-left: auto !important;
+        font-size: 11px !important;
+        color: rgba(255,255,255,0.25) !important;
+        transition: transform 0.2s;
+    }
+    .nav-sidebar .nav-item.menu-open > .nav-link .right {
+        transform: rotate(-90deg);
+        color: rgba(255,255,255,0.5) !important;
+    }
+
+    .nav-treeview {
+        padding-left: 10px !important;
+        border-left: 1px solid rgba(255,255,255,0.07) !important;
+        margin-left: 22px !important;
+    }
+    .nav-treeview .nav-link {
+        font-size: 12.5px !important;
+        padding: 7px 10px !important;
+        color: rgba(255,255,255,0.4) !important;
+    }
+    .nav-treeview .nav-link:hover { color: #ffffff !important; }
+    .nav-treeview .nav-link.active {
+        background: rgba(59,130,246,0.15) !important;
+        color: #93c5fd !important;
+        box-shadow: none !important;
+    }
+    .nav-treeview .nav-icon { font-size: 7px !important; color: rgba(255,255,255,0.2) !important; }
+    .nav-treeview .nav-link.active .nav-icon,
+    .nav-treeview .nav-link:hover .nav-icon { color: #93c5fd !important; }
+
+    .nav-logout .nav-link {
+        margin-top: 8px !important;
+        color: rgba(239,68,68,0.7) !important;
+        border: 1px solid rgba(239,68,68,0.15) !important;
+    }
+    .nav-logout .nav-link:hover {
+        background: rgba(239,68,68,0.1) !important;
+        color: #ef4444 !important;
+        border-color: rgba(239,68,68,0.3) !important;
+    }
+    .nav-logout .nav-link .nav-icon { color: rgba(239,68,68,0.6) !important; }
+    .nav-logout .nav-link:hover .nav-icon { color: #ef4444 !important; }
+
+    .sidebar-dark-info .nav-sidebar > .nav-item > .nav-link.active,
+    .sidebar-dark-info .nav-sidebar > .nav-item > .nav-link.active:hover {
+        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+        color: #fff !important;
+    }
+    .sidebar-dark-info .nav-sidebar .nav-link p {
+        color: inherit !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+    }
+
+    /* =====================================================
+       CONTENT HEADER (titres de page) — fond bleu
+       ===================================================== */
+    .content-header {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+        padding: 16px 24px !important;
+        margin-bottom: 24px !important;
+        box-shadow: 0 4px 16px rgba(59,130,246,0.22) !important;
+    }
+    .content-header h1 {
+        color: #ffffff !important;
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        margin: 0 !important;
+    }
+    .content-header .breadcrumb {
+        background: transparent !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .content-header .breadcrumb-item,
+    .content-header .breadcrumb-item a {
+        color: rgba(255,255,255,0.75) !important;
+        font-size: 13px !important;
+        text-decoration: none !important;
+    }
+    .content-header .breadcrumb-item a:hover { color: #ffffff !important; }
+    .content-header .breadcrumb-item.active { color: rgba(255,255,255,0.55) !important; }
+    .content-header .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.4) !important; }
+
+    /* =====================================================
+       CONTENT WRAPPER
+       ===================================================== */
+    .content-wrapper {
+        background: #f0f2f8 !important;
+    }
+
+    /* =====================================================
+       ALERTS (messages Django)
+       ===================================================== */
+    .alert {
+        border: none !important;
+        border-radius: 12px !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        padding: 14px 18px !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
+    }
+    .alert-success {
+        background: #ecfdf5 !important;
+        color: #065f46 !important;
+        border-left: 4px solid #10b981 !important;
+    }
+    .alert-danger {
+        background: #fef2f2 !important;
+        color: #991b1b !important;
+        border-left: 4px solid #ef4444 !important;
+    }
+
+    /* =====================================================
+       CARDS (global)
+       ===================================================== */
+    .card {
+        border-radius: 16px !important;
+        border: none !important;
+        background: #ffffff !important;
+        box-shadow: 0 2px 14px rgba(0,0,0,0.06) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .card:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.09) !important;
+    }
+    .card-header {
+        background: transparent !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        padding: 16px 20px !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .card-title {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #1e1e2d !important;
+        margin: 0 !important;
+    }
+    .card-body { padding: 16px 20px !important; }
+
+    .card-tools .btn-tool {
+        width: 28px !important;
+        height: 28px !important;
+        border-radius: 8px !important;
+        background: #f3f4f6 !important;
+        color: #9ca3af !important;
+        border: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        margin-left: 4px;
+    }
+    .card-tools .btn-tool:hover {
+        background: #e5e7eb !important;
+        color: #374151 !important;
+    }
+
+    /* =====================================================
+       STAT BOXES (small-box)
+       ===================================================== */
+    .small-box {
+        background: #ffffff !important;
+        border-radius: 16px !important;
+        padding: 22px 20px 16px 20px !important;
+        box-shadow: 0 2px 14px rgba(0,0,0,0.06) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        position: relative !important;
+        overflow: hidden !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+        color: #1e1e2d !important;
+        min-height: 120px;
+    }
+    .small-box:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.1) !important;
+    }
+    .small-box::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 4px;
+        border-radius: 16px 0 0 16px;
+    }
+    .bg-info::before    { background: #3b82f6; }
+    .bg-success::before { background: #10b981; }
+    .bg-purple::before  { background: #8b5cf6; }
+    .bg-danger::before  { background: #ef4444; }
+
+    .bg-info, .bg-success, .bg-purple, .bg-danger {
+        background: #ffffff !important;
+    }
+    .small-box .inner h3 {
+        font-size: 30px !important;
+        font-weight: 700 !important;
+        color: #1e1e2d !important;
+        margin-bottom: 4px !important;
+        line-height: 1.1;
+    }
+    .small-box .inner p {
+        font-size: 13px !important;
+        color: #9ca3af !important;
+        margin: 0 !important;
+        font-weight: 500;
+    }
+    .small-box .icon {
+        position: absolute !important;
+        top: 18px !important;
+        right: 18px !important;
+        width: 52px !important;
+        height: 52px !important;
+        border-radius: 14px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 22px !important;
+        opacity: 1 !important;
+    }
+    .bg-info .icon    { background: rgba(59,130,246,0.1);  color: #3b82f6; }
+    .bg-success .icon { background: rgba(16,185,129,0.1);  color: #10b981; }
+    .bg-purple .icon  { background: rgba(139,92,246,0.1);  color: #8b5cf6; }
+    .bg-danger .icon  { background: rgba(239,68,68,0.1);   color: #ef4444; }
+
+    .small-box-footer {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        margin-top: 12px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+    }
+    .bg-info .small-box-footer    { color: #3b82f6 !important; }
+    .bg-success .small-box-footer { color: #10b981 !important; }
+    .bg-purple .small-box-footer  { color: #8b5cf6 !important; }
+    .bg-danger .small-box-footer  { color: #ef4444 !important; }
+    .small-box-footer:hover { opacity: 0.75 !important; text-decoration: none !important; }
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+    .main-footer {
+        background: #ffffff !important;
+        border-top: 1px solid #e8ecf0 !important;
+        color: #9ca3af !important;
+        font-size: 13px !important;
+        padding: 14px 24px !important;
+    }
+
+    /* =====================================================
+       TABLES
+       ===================================================== */
+    .table {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .table thead th {
+        background: #f8fafc !important;
+        color: #374151 !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e5e7eb !important;
+        padding: 12px 16px !important;
+    }
+    .table tbody td {
+        color: #4b5563 !important;
+        font-size: 13px !important;
+        padding: 12px 16px !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        vertical-align: middle !important;
+    }
+    .table tbody tr:hover td { background: #f8faff !important; }
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        padding: 9px 20px !important;
+        box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
+        transition: opacity 0.15s, transform 0.15s !important;
+    }
+    .btn-primary:hover { opacity: 0.9 !important; transform: translateY(-1px) !important; }
+    .btn-success {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 12px rgba(16,185,129,0.25) !important;
+    }
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 12px rgba(239,68,68,0.25) !important;
+    }
+    .btn-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+    }
+    .btn-info {
+        background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+    }
+
+    /* =====================================================
+       FORMS
+       ===================================================== */
+    .form-control {
+        border-radius: 10px !important;
+        border: 1px solid #e5e7eb !important;
+        font-size: 13px !important;
+        padding: 10px 14px !important;
+        color: #374151 !important;
+        background: #fafafa !important;
+        transition: border-color 0.15s, box-shadow 0.15s !important;
+    }
+    .form-control:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.12) !important;
+        background: #ffffff !important;
+    }
+    label {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        margin-bottom: 5px !important;
+    }
+
+    /* =====================================================
+       GENERAL SPACING
+       ===================================================== */
+    .content { padding: 0 24px 24px 24px !important; }
+    .row { margin-bottom: 20px; }
+    </style>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+
+        {% include "main_app/sidebar_template.html" with user=user %}
+
+        <div class="content-wrapper">
+
+            <!-- Content Header -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0">{% block page_title %}{% endblock page_title %}</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active">{{ page_title }}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.content-header -->
+
+            <!-- Django messages -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                {% if messages %}
+                                {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                <div class="alert alert-success">{{ message }}</div>
+                                {% else %}
+                                <div class="alert alert-danger">{{ message }}</div>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {% block content %}{% endblock content %}
+
+        </div>
+        <!-- /.content-wrapper -->
+
+        {% include "main_app/footer.html" %}
+
+    </div>
+    <!-- ./wrapper -->
+
+    <script src="{% static 'plugins/jquery/jquery.min.js'%}"></script>
+    <script src="{% static 'plugins/jquery-ui/jquery-ui.min.js'%}"></script>
+    <script>$.widget.bridge('uibutton', $.ui.button)</script>
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'plugins/chart.js/Chart.min.js'%}"></script>
+    <script src="{% static 'plugins/sparklines/sparkline.js'%}"></script>
+    <script src="{% static 'plugins/jquery-knob/jquery.knob.min.js'%}"></script>
+    <script src="{% static 'plugins/moment/moment.min.js'%}"></script>
+    <script src="{% static 'plugins/daterangepicker/daterangepicker.js'%}"></script>
+    <script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js'%}"></script>
+    <script src="{% static 'plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js'%}"></script>
+    <script src="{% static 'dist/js/adminlte.js'%}"></script>
+    <script src="{% static 'dist/js/pages/dashboard.js'%}"></script>
+    <script src="{% static 'dist/js/demo.js'%}"></script>
+    {% block custom_js %}{% endblock custom_js %}
+</body>
+
+</html>

@@ -1,0 +1,128 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+
+{% block page_title %}
+{{ page_title }}
+{% endblock page_title %}
+
+{% block custom_css %}
+<style>
+.invalid{
+    font-style: italic;
+    font-weight: bold;
+    color: red;
+}
+
+.valid{
+    font-style: italic;
+    font-weight: bold;
+    color: green;
+}
+</style>
+{% endblock custom_css %}
+
+{% block content %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="card card-dark">
+
+                    <div class="card-header">
+                        <h3 class="card-title">{{ page_title }}</h3>
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- FORM START -->
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <!-- EMAIL -->
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="email" id="id_email" class="form-control" required>
+                            </div>
+
+                            <!-- PASSWORD -->
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+
+                            <!-- IMAGE UPLOAD -->
+                            <div class="form-group">
+                                <label>Photo de profil</label>
+                                <input type="file" name="profile_pic" class="form-control" accept="image/*">
+                            </div>
+
+                            <!-- STUDENT -->
+                            <div class="form-group">
+                                <label>Student</label>
+                                <select name="student" class="form-control" required>
+                                    <option value="">Select Student</option>
+                                    {% for student in students %}
+                                        <option value="{{ student.id }}">
+                                            {{ student.admin.first_name }} {{ student.admin.last_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Add Parent
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block custom_js %}
+<script>
+function validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
+$(document).ready(function(){
+
+    $("#id_email").keyup(function(){
+        var email = $(this).val();
+
+        if (validateEmail(email)){
+
+            $.ajax({
+                url: "{% url 'check_email_availability' %}",
+                type: 'POST',
+                data: {email: email}
+            }).done(function(response){
+
+                $(".email_error").remove();
+
+                if (response == "True"){
+                    $("<span class='invalid email_error'>Email déjà utilisé</span>").insertAfter("#id_email");
+                }
+                else{
+                    $("<span class='valid email_error'>Email disponible</span>").insertAfter("#id_email");
+                }
+
+            }).fail(function(){
+                $(".email_error").remove();
+                $("<span class='invalid email_error'>Erreur serveur</span>").insertAfter("#id_email");
+            });
+        }
+    });
+
+});
+</script>
+{% endblock custom_js %}

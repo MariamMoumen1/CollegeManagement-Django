@@ -1,0 +1,26 @@
+{% extends 'main_app/base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+    <h3>👨‍👦 Tableau de bord Parent</h3>
+
+    <div class="card p-4 mt-3">
+        <h4>Étudiant : {{ student.admin.first_name }} {{ student.admin.last_name }}</h4>
+        <p>Email : {{ student.admin.email }}</p>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <a href="{% url 'parent_attendance' %}" class="btn btn-primary btn-block">
+                📊 Voir Attendance
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'parent_result' %}" class="btn btn-success btn-block">
+                📈 Voir Notes
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

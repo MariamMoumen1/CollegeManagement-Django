@@ -1,0 +1,371 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{total_students}}</h3>
+                        <p>Total Students</p>
+                    </div>
+                    <div class="icon">
+                      <i class="nav-icon fas fa-user-graduate"></i>
+                    </div>
+                    <a href="{% url 'manage_student' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{total_staff}}</h3>
+                        <p>Total Staff</p>
+                    </div>
+                    <div class="icon">
+                      <i class="nav-icon fas fa-users"></i>
+                    </div>
+                    <a href="{% url 'manage_staff' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-purple">
+                    <div class="inner">
+                        <h3>{{total_course}}</h3>
+                        <p>Total Course</p>
+                    </div>
+                    <div class="icon">
+                      <i class="nav-icon fas fa-th-list"></i>
+                    </div>
+                    <a href="{% url 'manage_course' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{total_subject}}</h3>
+                        <p>Total Subjects</p>
+                    </div>
+                    <div class="icon">
+                      <i class="nav-icon fas fa-book"></i>
+                    </div>
+                    <a href="{% url 'manage_subject' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Main row -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-dark">
+                  <div class="card-header">
+                    <h3 class="card-title">Staffs - Students Overview</h3>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart">
+                      <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-dark">
+                  <div class="card-header">
+                    <h3 class="card-title">Attendance Per Subject</h3>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart">
+                      <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row (main row) -->
+
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card card-dark">
+              <div class="card-header">
+                <h3 class="card-title">Total Students in Each Course</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas id="pieChart2" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="card card-dark">
+              <div class="card-header">
+                <h3 class="card-title">Total Students in Each Subject</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas id="pieChart3" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div><!-- /.container-fluid -->
+</section>
+{% endblock content %}
+
+{% block custom_js %}
+<script>
+  $(document).ready(function(){
+
+    // PIE CHART 1 - Staffs vs Students
+    var donutData = {
+      labels: ['Students', 'Staff'],
+      datasets: [{
+        data: [{{total_students}}, {{total_staff}}],
+        backgroundColor: ['#3b82f6', '#10b981'],
+        borderWidth: 0
+      }]
+    };
+    var pieChartCanvas = $('#pieChart').get(0).getContext('2d');
+    new Chart(pieChartCanvas, {
+      type: 'pie',
+      data: donutData,
+      options: { maintainAspectRatio: false, responsive: true }
+    });
+
+    // BAR CHART - Attendance Per Subject
+    var subject_list = {{ subject_list|safe|escape }};
+    var attendance_list = {{ attendance_list }};
+    var barChartCanvas = $('#barChart').get(0).getContext('2d');
+    new Chart(barChartCanvas, {
+      type: 'bar',
+      data: {
+        labels: subject_list,
+        datasets: [{
+          label: 'Attendance Per Subject',
+          backgroundColor: '#3b82f6',
+          borderColor: '#3b82f6',
+          data: attendance_list
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [{ stacked: true }],
+          yAxes: [{ stacked: true }]
+        }
+      }
+    });
+
+    // PIE CHART 3 - Students per Subject
+    var student_count_list_in_subject = {{ student_count_list_in_subject }};
+    var subject_list2 = {{ subject_list|safe }};
+    var pieChartCanvas3 = $('#pieChart3').get(0).getContext('2d');
+    new Chart(pieChartCanvas3, {
+      type: 'pie',
+      data: {
+        labels: subject_list2,
+        datasets: [{
+          data: student_count_list_in_subject,
+          backgroundColor: ['#3b82f6','#10b981','#8b5cf6','#ef4444','#f59e0b','#06b6d4','#ec4899','#84cc16','#f97316'],
+          borderWidth: 0
+        }]
+      },
+      options: { maintainAspectRatio: false, responsive: true }
+    });
+
+    // PIE CHART 2 - Students per Course
+    var course_name_list = {{ course_name_list|safe }};
+    var student_count_list_in_course = {{ student_count_list_in_course }};
+    var pieChartCanvas2 = $('#pieChart2').get(0).getContext('2d');
+    new Chart(pieChartCanvas2, {
+      type: 'pie',
+      data: {
+        labels: course_name_list,
+        datasets: [{
+          data: student_count_list_in_course,
+          backgroundColor: ['#ef4444','#10b981','#f59e0b','#06b6d4','#3b82f6','#8b5cf6','#f97316','#71bfb2'],
+          borderWidth: 0
+        }]
+      },
+      options: { maintainAspectRatio: false, responsive: true }
+    });
+
+  });
+</script>
+
+<style>
+/* ===================== GLOBAL ===================== */
+body {
+  background-color: #f0f2f8;
+  font-family: 'Segoe UI', sans-serif;
+}
+.content {
+  padding: 24px;
+}
+.row {
+  margin-bottom: 20px;
+}
+
+/* ===================== STAT CARDS ===================== */
+.small-box {
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  padding: 22px 20px 16px 20px !important;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.06) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  color: #1e1e2d !important;
+  min-height: 120px;
+}
+.small-box:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.1) !important;
+}
+
+/* Bande colorée à gauche */
+.small-box::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  border-radius: 16px 0 0 16px;
+}
+.bg-info::before    { background: #3b82f6; }
+.bg-success::before { background: #10b981; }
+.bg-purple::before  { background: #8b5cf6; }
+.bg-danger::before  { background: #ef4444; }
+
+/* Supprimer les anciens fonds colorés */
+.bg-info, .bg-success, .bg-purple, .bg-danger {
+  background: #ffffff !important;
+}
+
+/* Nombre et label */
+.small-box .inner h3 {
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  color: #1e1e2d !important;
+  margin-bottom: 4px !important;
+  line-height: 1.1;
+}
+.small-box .inner p {
+  font-size: 13px !important;
+  color: #9ca3af !important;
+  margin: 0 !important;
+  font-weight: 500;
+}
+
+/* Icône bulle colorée */
+.small-box .icon {
+  position: absolute !important;
+  top: 18px !important;
+  right: 18px !important;
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 22px !important;
+  opacity: 1 !important;
+}
+.bg-info .icon    { background: rgba(59,130,246,0.1);  color: #3b82f6; }
+.bg-success .icon { background: rgba(16,185,129,0.1);  color: #10b981; }
+.bg-purple .icon  { background: rgba(139,92,246,0.1);  color: #8b5cf6; }
+.bg-danger .icon  { background: rgba(239,68,68,0.1);   color: #ef4444; }
+
+/* Lien "More info" */
+.small-box-footer {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  margin-top: 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  width: fit-content;
+}
+.bg-info .small-box-footer    { color: #3b82f6 !important; }
+.bg-success .small-box-footer { color: #10b981 !important; }
+.bg-purple .small-box-footer  { color: #8b5cf6 !important; }
+.bg-danger .small-box-footer  { color: #ef4444 !important; }
+.small-box-footer:hover { opacity: 0.75 !important; text-decoration: none !important; }
+.small-box-footer i { margin-left: 3px; }
+
+/* ===================== CHART CARDS ===================== */
+.card {
+  border-radius: 16px !important;
+  border: none !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.06) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.09) !important;
+}
+.card-header {
+  background: transparent !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 16px 20px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #1e1e2d !important;
+  margin: 0 !important;
+}
+.card-body {
+  padding: 16px 20px !important;
+}
+
+/* Boutons minimize / remove */
+.card-tools .btn-tool {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px !important;
+  background: #f3f4f6 !important;
+  color: #9ca3af !important;
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin-left: 4px;
+}
+.card-tools .btn-tool:hover {
+  background: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+/* Zone graphique */
+.chart {
+  padding: 6px 0;
+}
+</style>
+{% endblock custom_js %}

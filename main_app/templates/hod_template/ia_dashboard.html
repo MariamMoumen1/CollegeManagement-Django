@@ -1,0 +1,292 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  :root {
+    --bg-main: #f0f4f8;
+    --bg-card: #ffffff;
+    --blue: #3b82f6;
+    --blue-dark: #2563eb;
+    --blue-light: #dbeafe;
+    --red: #ef4444;
+    --orange: #f97316;
+    --yellow: #eab308;
+    --green: #22c55e;
+    --green-light: #dcfce7;
+    --purple: #8b5cf6;
+    --purple-light: #ede9fe;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border: #e2e8f0;
+    --radius: 14px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+
+  .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+  .page-header h1 { font-size:22px; font-weight:700; color:var(--text-primary); }
+  .breadcrumb-bar { font-size:12px; color:var(--text-muted); }
+  .breadcrumb-bar a { color:var(--blue); text-decoration:none; }
+
+  .kpi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
+  .kpi-card { background:#fff; border-radius:14px; padding:20px 22px 16px; box-shadow:var(--shadow); border:1px solid var(--border); position:relative; overflow:hidden; }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .kpi-card.danger::before  { background:var(--red); }
+  .kpi-card.warning::before { background:var(--yellow); }
+  .kpi-card.success::before { background:var(--green); }
+  .kpi-label { font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px; }
+  .kpi-value { font-size:36px; font-weight:700; letter-spacing:-1px; line-height:1; margin-bottom:4px; }
+  .kpi-card.danger  .kpi-value { color:var(--red); }
+  .kpi-card.warning .kpi-value { color:var(--yellow); }
+  .kpi-card.success .kpi-value { color:var(--green); }
+  .kpi-sub { font-size:12px; color:var(--text-muted); margin-bottom:8px; }
+  .kpi-trend { font-size:11.5px; font-weight:600; }
+  .kpi-trend.up { color:var(--red); }
+  .kpi-trend.down { color:var(--green); }
+  .sparkbar { display:flex; gap:3px; align-items:flex-end; height:28px; margin-top:12px; }
+  .sparkbar span { flex:1; border-radius:3px; display:block; }
+
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+
+  .section-card { background:#fff; border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:20px; }
+  .section-header { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+  .section-title { font-size:14px; font-weight:700; color:var(--text-primary); }
+  .badge-algo { font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; }
+  .badge-rf     { background:var(--purple-light); color:var(--purple); }
+  .badge-reg    { background:var(--blue-light);   color:var(--blue-dark); }
+  .badge-kmeans { background:var(--green-light);  color:#166534; }
+
+  .risk-list { display:flex; flex-direction:column; gap:8px; }
+  .risk-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; border:1px solid var(--border); background:#fafbfc; }
+  .risk-item:hover { background:var(--blue-light); border-color:#bfdbfe; }
+  .risk-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .risk-info { flex:1; min-width:0; }
+  .risk-name { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .risk-detail { font-size:11px; color:var(--text-muted); margin-top:1px; }
+  .risk-badge { font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+
+  .absence-list { display:flex; flex-direction:column; gap:10px; }
+  .absence-row { display:flex; flex-direction:column; gap:4px; }
+  .absence-meta { display:flex; justify-content:space-between; align-items:center; }
+  .absence-label { font-size:12px; color:var(--text-secondary); font-weight:500; }
+  .absence-count { font-size:12px; font-weight:700; }
+  .absence-track { height:7px; background:var(--border); border-radius:10px; overflow:hidden; }
+  .absence-fill { height:100%; border-radius:10px; }
+  .alert-ia { margin-top:12px; padding:10px 14px; background:var(--blue-light); border-radius:8px; font-size:12px; color:var(--blue-dark); font-weight:500; border-left:3px solid var(--blue); }
+  .absence-legend { display:flex; gap:14px; margin-top:10px; }
+  .legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-muted); }
+  .legend-dot { width:8px; height:8px; border-radius:50%; }
+
+  .cluster-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .cluster-card { background:#fafbfc; border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .cluster-subject { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+  .cluster-score { font-size:28px; font-weight:700; color:var(--text-primary); letter-spacing:-1px; margin-bottom:6px; }
+  .cluster-bar { height:4px; border-radius:4px; margin-bottom:6px; }
+  .cluster-status { font-size:11px; font-weight:600; }
+</style>
+
+<section class="content">
+  <div class="container-fluid" style="padding: 24px;">
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Tableau de bord Intelligence Artificielle</h1>
+      <div class="breadcrumb-bar">
+        <a href="{% url 'admin_home' %}">Home</a> / IA Dashboard
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">Élèves à risque détectés</div>
+        <div class="kpi-value">7</div>
+        <div class="kpi-sub">sur 48 élèves actifs</div>
+        <span class="kpi-trend up">▲ +2 vs semaine dernière</span>
+        <div class="sparkbar">
+          <span style="height:8px;background:rgba(239,68,68,0.2);"></span>
+          <span style="height:10px;background:rgba(239,68,68,0.3);"></span>
+          <span style="height:9px;background:rgba(239,68,68,0.4);"></span>
+          <span style="height:12px;background:rgba(239,68,68,0.5);"></span>
+          <span style="height:11px;background:rgba(239,68,68,0.6);"></span>
+          <span style="height:14px;background:rgba(239,68,68,0.7);"></span>
+          <span style="height:13px;background:rgba(239,68,68,0.8);"></span>
+          <span style="height:16px;background:rgba(239,68,68,0.9);"></span>
+          <span style="height:15px;background:rgba(239,68,68,0.95);"></span>
+          <span style="height:18px;background:rgba(239,68,68,1);"></span>
+        </div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">Taux d'absentéisme prévu</div>
+        <div class="kpi-value">18%</div>
+        <div class="kpi-sub">semaine prochaine (prédiction)</div>
+        <span class="kpi-trend up">▲ +4% vs moyenne</span>
+        <div class="sparkbar">
+          <span style="height:8px;background:rgba(234,179,8,0.2);"></span>
+          <span style="height:10px;background:rgba(234,179,8,0.3);"></span>
+          <span style="height:12px;background:rgba(234,179,8,0.4);"></span>
+          <span style="height:11px;background:rgba(234,179,8,0.5);"></span>
+          <span style="height:14px;background:rgba(234,179,8,0.6);"></span>
+          <span style="height:13px;background:rgba(234,179,8,0.7);"></span>
+          <span style="height:16px;background:rgba(234,179,8,0.8);"></span>
+          <span style="height:15px;background:rgba(234,179,8,0.9);"></span>
+          <span style="height:17px;background:rgba(234,179,8,0.95);"></span>
+          <span style="height:20px;background:rgba(234,179,8,1);"></span>
+        </div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">Taux de réussite prévu</div>
+        <div class="kpi-value">74%</div>
+        <div class="kpi-sub">prochain examen (modèle RF)</div>
+        <span class="kpi-trend down">▼ -3% vs session précédente</span>
+        <div class="sparkbar">
+          <span style="height:10px;background:rgba(34,197,94,0.2);"></span>
+          <span style="height:12px;background:rgba(34,197,94,0.3);"></span>
+          <span style="height:14px;background:rgba(34,197,94,0.4);"></span>
+          <span style="height:13px;background:rgba(34,197,94,0.5);"></span>
+          <span style="height:16px;background:rgba(34,197,94,0.6);"></span>
+          <span style="height:15px;background:rgba(34,197,94,0.7);"></span>
+          <span style="height:18px;background:rgba(34,197,94,0.8);"></span>
+          <span style="height:17px;background:rgba(34,197,94,0.9);"></span>
+          <span style="height:20px;background:rgba(34,197,94,0.95);"></span>
+          <span style="height:22px;background:rgba(34,197,94,1);"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two col -->
+    <div class="two-col">
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">Alertes décrochage scolaire</span>
+          <span class="badge-algo badge-rf">Random Forest</span>
+        </div>
+        <div class="risk-list">
+          <div class="risk-item">
+            <div class="risk-dot" style="background:#ef4444;"></div>
+            <div class="risk-info">
+              <div class="risk-name">Karim Benali — 3ème B</div>
+              <div class="risk-detail">5 absences · Moy. 7.2 en chute · -4pts/mois</div>
+            </div>
+            <span class="risk-badge" style="background:#fee2e2;color:#dc2626;">86% risque</span>
+          </div>
+          <div class="risk-item">
+            <div class="risk-dot" style="background:#f97316;"></div>
+            <div class="risk-info">
+              <div class="risk-name">Sara Idrissi — 2nde A</div>
+              <div class="risk-detail">4 absences · Moy. 8.1 · difficultés maths</div>
+            </div>
+            <span class="risk-badge" style="background:#fff7ed;color:#ea580c;">79% risque</span>
+          </div>
+          <div class="risk-item">
+            <div class="risk-dot" style="background:#eab308;"></div>
+            <div class="risk-info">
+              <div class="risk-name">Youssef Amrani — 4ème C</div>
+              <div class="risk-detail">3 absences · Moy. stable 10.5 · manque participation</div>
+            </div>
+            <span class="risk-badge" style="background:#fefce8;color:#ca8a04;">61% risque</span>
+          </div>
+          <div class="risk-item">
+            <div class="risk-dot" style="background:#f59e0b;"></div>
+            <div class="risk-info">
+              <div class="risk-name">Fatima Zohra — 1ère A</div>
+              <div class="risk-detail">2 absences · Moy. 9.0 · retards fréquents</div>
+            </div>
+            <span class="risk-badge" style="background:#fffbeb;color:#d97706;">54% risque</span>
+          </div>
+          <div class="risk-item">
+            <div class="risk-dot" style="background:#22c55e;"></div>
+            <div class="risk-info">
+              <div class="risk-name">Hamza Tazi — 3ème A</div>
+              <div class="risk-detail">1 absence · Moy. 11.2 · légère baisse</div>
+            </div>
+            <span class="risk-badge" style="background:#dcfce7;color:#16a34a;">32% risque</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">Prévision absences — 4 semaines</span>
+          <span class="badge-algo badge-reg">Régression</span>
+        </div>
+        <div class="absence-list">
+          <div class="absence-row">
+            <div class="absence-meta">
+              <span class="absence-label">Sem. actuelle (réel)</span>
+              <span class="absence-count" style="color:#3b82f6;">12 absences</span>
+            </div>
+            <div class="absence-track"><div class="absence-fill" style="width:30%;background:#3b82f6;"></div></div>
+          </div>
+          <div class="absence-row">
+            <div class="absence-meta">
+              <span class="absence-label">Sem. +1 (prédiction)</span>
+              <span class="absence-count" style="color:#f97316;">18 absences</span>
+            </div>
+            <div class="absence-track"><div class="absence-fill" style="width:45%;background:#f97316;"></div></div>
+          </div>
+          <div class="absence-row">
+            <div class="absence-meta">
+              <span class="absence-label">Sem. +2 (prédiction)</span>
+              <span class="absence-count" style="color:#ef4444;">24 absences</span>
+            </div>
+            <div class="absence-track"><div class="absence-fill" style="width:60%;background:#ef4444;"></div></div>
+          </div>
+          <div class="absence-row">
+            <div class="absence-meta">
+              <span class="absence-label">Sem. +3 (prédiction)</span>
+              <span class="absence-count" style="color:#f97316;">16 absences</span>
+            </div>
+            <div class="absence-track"><div class="absence-fill" style="width:40%;background:#f97316;"></div></div>
+          </div>
+        </div>
+        <div class="alert-ia">
+          Alerte IA : Pic prévu semaine +2 — classe 3ème B. Action recommandée : réunion enseignants jeudi.
+        </div>
+        <div class="absence-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div> Réel</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f97316;"></div> Prédit</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clustering -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-title">Analyse des performances par matière — clustering élèves</span>
+        <span class="badge-algo badge-kmeans">K-Means</span>
+      </div>
+      <div class="cluster-grid">
+        <div class="cluster-card">
+          <div class="cluster-subject">Mathématiques</div>
+          <div class="cluster-score">11.4</div>
+          <div class="cluster-bar" style="background:#dbeafe;"><div style="width:57%;height:100%;border-radius:4px;background:#3b82f6;"></div></div>
+          <div class="cluster-status" style="color:#ef4444;">8 élèves en difficulté</div>
+        </div>
+        <div class="cluster-card">
+          <div class="cluster-subject">Français</div>
+          <div class="cluster-score">13.7</div>
+          <div class="cluster-bar" style="background:#dcfce7;"><div style="width:68%;height:100%;border-radius:4px;background:#22c55e;"></div></div>
+          <div class="cluster-status" style="color:#16a34a;">Niveau satisfaisant</div>
+        </div>
+        <div class="cluster-card">
+          <div class="cluster-subject">Sciences</div>
+          <div class="cluster-score">10.2</div>
+          <div class="cluster-bar" style="background:#fff7ed;"><div style="width:51%;height:100%;border-radius:4px;background:#f97316;"></div></div>
+          <div class="cluster-status" style="color:#f97316;">5 élèves à surveiller</div>
+        </div>
+        <div class="cluster-card">
+          <div class="cluster-subject">Anglais</div>
+          <div class="cluster-score">14.1</div>
+          <div class="cluster-bar" style="background:#dcfce7;"><div style="width:70%;height:100%;border-radius:4px;background:#22c55e;"></div></div>
+          <div class="cluster-status" style="color:#16a34a;">Très bon niveau</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /container-fluid -->
+</section>
+
+{% endblock content %}
