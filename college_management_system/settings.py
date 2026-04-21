@@ -90,11 +90,11 @@ WSGI_APPLICATION = 'college_management_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'college_db'),
-        'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASS', ''),
-        'HOST': os.environ.get('DB_HOST', 'mysql-service'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
+        'NAME': 'college_db',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'mysql-service',
+        'PORT': '3306',
     }
 }
 
